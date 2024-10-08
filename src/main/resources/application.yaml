@@ -1,0 +1,42 @@
+spring:
+  application.name:
+    sol_test
+  cloud:
+    function:
+      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup
+    stream:
+      bindings:
+        nonDurableQueue-in-0:
+          destination: spring/cloud/stream
+#       binder will actually create a Durable Exclusive Queue
+        exclusiveDurableQueue-in-0:
+          destination: spring/cloud/stream/excl/durable
+          group: exclusive
+#       binder will actually create a Durable Non-Exclusive Queue
+        consumerGroup-in-0:
+          destination: spring/cloud/stream/consumerGroup
+          group: nonexclusive
+        ConcurrentConsumerGroup-in-0:
+          destination: spring/cloud/stream/consumerGroup/concurrent
+          group: nonexclusive
+          consumer:
+            concurrency: 5
+#       Solace specific property queueAccessType to use an exclusive queue.
+      solace:
+        bindings:
+          exclusiveDurableQueue-in-0:
+            consumer:
+              queue-access-type:1 #1 is exclusive, 0 is non exclusive
+      binders:
+        #This section of the configuration tells the solace binder how to connect to the solace event broker/mesh
+        solace-broker:
+          type: solace
+          environment:
+            solace:
+              java:
+                host: tcps://mr-connection-61vipbi3itd.messaging.solace.cloud:55443
+                msgVpn: solace_servive
+                clientUsername: solace-cloud-client
+                clientPassword:
+
+
