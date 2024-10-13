@@ -6,6 +6,7 @@ spring:
       definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup
     stream:
       bindings:
+#      binder will actually create a nonDurable Queue
         nonDurableQueue-in-0:
           destination: spring/cloud/stream
 #       binder will actually create a Durable Exclusive Queue
@@ -26,7 +27,7 @@ spring:
         bindings:
           exclusiveDurableQueue-in-0:
             consumer:
-              queue-access-type:1 #1 is exclusive, 0 is non exclusive
+              queue-access-type:1 #1 is exclusive, 0 is nonExclusive
       binders:
         #This section of the configuration tells the solace binder how to connect to the solace event broker/mesh
         solace-broker:
