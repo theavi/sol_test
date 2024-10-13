@@ -3,8 +3,10 @@ spring:
     sol_test
   cloud:
     function:
-      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader
+      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader;PublishHeader
     stream:
+      poller:
+        fixed-delay: 10000
       bindings:
 #      binder will actually create a nonDurable Queue
         nonDurableQueue-in-0:
@@ -28,6 +30,10 @@ spring:
           group: nonexclusive
           consumer:
             concurrency: 5
+#        Publishing Header in Event
+        PublishHeader-out-0:
+          destination: spring/cloud/stream/consumerGroup/concurrent/header
+
 #       Solace specific property queueAccessType to use an exclusive queue.
       solace:
         bindings:
