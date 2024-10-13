@@ -3,7 +3,7 @@ spring:
     sol_test
   cloud:
     function:
-      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup
+      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader
     stream:
       bindings:
 #      binder will actually create a nonDurable Queue
@@ -19,6 +19,12 @@ spring:
           group: nonexclusive
         ConcurrentConsumerGroup-in-0:
           destination: spring/cloud/stream/consumerGroup/concurrent
+          group: nonexclusive
+          consumer:
+            concurrency: 5
+#        Consuming  header from message
+        consumingHeader-in-0:
+          destination: spring/cloud/stream/consumerGroup/concurrent/header
           group: nonexclusive
           consumer:
             concurrency: 5
@@ -38,6 +44,6 @@ spring:
                 host: tcps://mr-connection-61vipbi3itd.messaging.solace.cloud:55443
                 msgVpn: solace_servive
                 clientUsername: solace-cloud-client
-                clientPassword:
+                clientPassword: oghef03v4oj50sksdnj68p5mmj
 
 
