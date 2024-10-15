@@ -3,7 +3,7 @@ spring:
     sol_test
   cloud:
     function:
-      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader;PublishHeader
+      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader;PublishHeader;wildcardSubscribe
     stream:
       poller:
         fixed-delay: 10000
@@ -33,6 +33,17 @@ spring:
 #        Publishing Header in Event
         PublishHeader-out-0:
           destination: spring/cloud/stream/consumerGroup/concurrent/header
+#        Wildcard subscription.
+        wildcardSubscribe-in-0:
+          destination: 'spring/*/stream/>'
+          group: nonexclusive
+          consumer:
+            concurrency: 5
+        additionalQueueSubscription-in-0:
+          destination: spring/cloud/stream/additional
+          group: nonexclusive
+          consumer:
+            concurrency: 5
 
 #       Solace specific property queueAccessType to use an exclusive queue.
       solace:
@@ -40,6 +51,11 @@ spring:
           exclusiveDurableQueue-in-0:
             consumer:
               queue-access-type:1 #1 is exclusive, 0 is nonExclusive
+          additionalQueueSubscription-in-0:
+            consumer:
+              queueAdditionalSubscriptions:
+                - 'spring/cloud/stream/additional/a'
+                - 'spring/cloud/stream/additional/b'
       binders:
         #This section of the configuration tells the solace binder how to connect to the solace event broker/mesh
         solace-broker:
