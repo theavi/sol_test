@@ -3,7 +3,7 @@ spring:
     sol_test
   cloud:
     function:
-      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader;PublishHeader;wildcardSubscribe;publishEventOnDynamicTopic
+      definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader;PublishHeader;wildcardSubscribe;publishEventOnDynamicTopic;bindingHeader
     stream:
       poller:
         fixed-delay: 10000
@@ -50,6 +50,14 @@ spring:
           group: nonexclusive
           consumer:
             concurrency: 5
+#      dynamic publishing with BinderHeaders.TARGET_DESTINATION
+        bindingHeader-in-0:
+          destination: spring/cloud/stream/dynamic_publishing/bindingHeader
+          group: nonexclusive
+          consumer:
+            concurrency: 5
+        bindingHeader-out-0:
+          destination: 'my/default/topic'
 #       Solace specific property queueAccessType to use an exclusive queue.
       solace:
         bindings:
