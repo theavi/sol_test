@@ -4,6 +4,7 @@ spring:
   cloud:
     function:
       definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader;PublishHeader;wildcardSubscribe;publishEventOnDynamicTopic;bindingHeader;bulkPublish;bulkConsume
+                ;clientAck
     stream:
       poller:
         fixed-delay: 100000
@@ -66,13 +67,19 @@ spring:
             concurrency: 5
         bulkPublish-out-0:
           destination: 'my/default/topic'
-#        Bulk consume
+#        Batch consume
         bulkConsume-in-0:
           destination: 'my/default/topic'
           group: batch
           consumer:
             batch-mode: true
             useNativeDecoding: true
+#        Manual Acknowledgement
+        clientAck-in-0:
+          destination: 'a/b/>'
+          group: clientAck
+        clientAck:out-0:
+          destination: 'my/default/topic'
 #       Solace specific property queueAccessType to use an exclusive queue.
       solace:
         bindings:
@@ -84,11 +91,16 @@ spring:
               queueAdditionalSubscriptions:
                 - 'spring/cloud/stream/additional/a'
                 - 'spring/cloud/stream/additional/b'
-#          Bulk consume
+#          Batch consume
           bulkConsume-in-0:
             consumer:
               batch-max-size: 5
               batch-timeout: 5000
+#          Manual Acknowledgement
+          clientAck-in-0:
+            consumer:
+              queueMaxMsgRedelivery: 2
+
       binders:
         #This section of the configuration tells the solace binder how to connect to the solace event broker/mesh
         solace-broker:
