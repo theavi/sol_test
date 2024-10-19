@@ -4,10 +4,13 @@ spring:
   cloud:
     function:
       definition: nonDurableQueue;exclusiveDurableQueue;consumerGroup;ConcurrentConsumerGroup;consumingHeader;PublishHeader;wildcardSubscribe;publishEventOnDynamicTopic;bindingHeader;bulkPublish;bulkConsume
-                ;clientAck
+                ;clientAck;bindingSpecificError;globalGenericError;bindingErrorHandler;globalErrorHandler
     stream:
+      default:
+        error-handler-definition: globalErrorHandler
+#        supplier polls every configured time duration and triggers the supplier. By default, it polls every second
       poller:
-        fixed-delay: 100000
+        fixed-delay: 1000000
       bindings:
 #      binder will actually create a nonDurable Queue
         nonDurableQueue-in-0:
@@ -80,6 +83,31 @@ spring:
           group: clientAck
         clientAck:out-0:
           destination: 'my/default/topic'
+#        Consumer Error Handling
+        bindingSpecificError-in-0:
+          destination: 'bindingSpecificError'
+          group: clientAck
+          error-handler-definition: bindingErrorHandler
+          consumer:
+            max-attempts: 2
+            back-off-initial-interval: 1
+            back-off-multiplier: 3
+            default-retryable: true
+            retryable-exceptions:
+              java.lang.IllegalStateException: true
+          binder: solace-broker
+
+        globalGenericError-in-0:
+          destination: 'globalGenericError'
+          group: clientAck
+          consumer:
+            max-attempts: 2
+            back-off-initial-interval: 1
+            back-off-multiplier: 3
+            default-retryable: true
+            retryable-exceptions:
+              java.lang.IllegalStateException: true
+          binder: solace-broker
 #       Solace specific property queueAccessType to use an exclusive queue.
       solace:
         bindings:
